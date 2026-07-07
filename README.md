@@ -49,55 +49,6 @@ Para asegurar reproducibilidad y evitar problemas de compatibilidad, se recomien
 
 El uso de Docker permite mantener un entorno controlado y facilita la instalación de dependencias necesarias para la simulación y entrenamiento.
 
-## Estructura del repositorio
-
-La estructura inicial propuesta para el proyecto es la siguiente:
-
-```
-cuadruped-go2/
-├── README.md
-├── docs/
-│   ├── reporte_intermedio.pdf
-│   └── referencias.md
-├── videos/
-│   ├── simulacion_inicial.mp4
-│   └── pruebas_fallidas/
-├── setup/
-│   ├── docker/
-│   └── instrucciones_instalacion.md
-├── cpg/
-│   ├── oscillators/
-│   ├── inverse_kinematics/
-│   ├── cem/
-│   └── experiments/
-├── rl/
-│   ├── rewards/
-│   ├── configs/
-│   ├── checkpoints/
-│   └── experiments/
-└── results/
-    ├── plots/
-    ├── logs/
-    └── evaluations/
-```
-
-Esta estructura puede modificarse durante el desarrollo según las necesidades del proyecto.
-
-## Avance actual
-
-Hasta la fecha, se han realizado las siguientes tareas iniciales:
-
-- Revisión del enunciado del proyecto.
-- Separación del trabajo en dos enfoques principales: CPG + CEM y RL.
-- Identificación de las herramientas principales del proyecto.
-- Revisión preliminar de MuJoCo Playground.
-- Revisión de los repositorios oficiales de Unitree.
-- Identificación del script `stand_go2.py` como punto de partida para comprender el envío de comandos articulares al robot.
-- Identificación de `joystick.py` como archivo relevante para la modificación de funciones de recompensa en RL.
-- Definición preliminar del pipeline de trabajo para CPG.
-- Definición preliminar del pipeline de trabajo para RL.
-- Preparación del repositorio para documentar avances, errores, videos y resultados.
-
 ## Enfoque 1: CPG + CEM
 
 ### Descripción
@@ -222,9 +173,9 @@ Reward = seguimiento de velocidad lineal
 
 La comparación entre ambas formulaciones permitirá analizar qué términos favorecen una locomoción más estable y eficiente.
 
-## Problemas identificados
+## Desafíos anticipados
 
-Durante la etapa inicial del proyecto se identificaron algunos desafíos técnicos relevantes:
+Se anticipan algunos desafíos técnicos relevantes para el desarrollo del proyecto:
 
 - Instalación correcta de MuJoCo Playground desde source.
 - Compatibilidad entre librerías, CUDA y drivers de GPU.
@@ -236,8 +187,6 @@ Durante la etapa inicial del proyecto se identificaron algunos desafíos técnic
 - Diseño de una función de costo útil para CEM.
 - Diseño de recompensas que no generen comportamientos indeseados en RL.
 - Evaluación objetiva de estabilidad y desempeño de la caminata.
-
-Estos problemas serán abordados progresivamente durante el desarrollo del proyecto.
 
 ## Próximos pasos
 
@@ -261,19 +210,7 @@ Los próximos pasos del proyecto son:
 
 ## Evidencia y resultados
 
-Los videos de simulación, capturas y resultados experimentales serán almacenados en la carpeta:
-
-```
-videos/
-```
-
-Los gráficos, logs y evaluaciones serán almacenados en:
-
-```
-results/
-```
-
-Se recomienda guardar evidencia incluso cuando los resultados sean desfavorables, ya que las pruebas fallidas permiten identificar problemas de simulación, control, estabilidad o diseño de recompensa.
+A medida que se avance en el proyecto, los videos de simulación, capturas y resultados experimentales se almacenarán en la carpeta `videos/`, y los gráficos, logs y evaluaciones en `results/`.
 
 ## Criterios de evaluación considerados
 
@@ -300,8 +237,4 @@ Las referencias consideradas inicialmente para el desarrollo del proyecto son:
 
 ## Estado del proyecto
 
-**Estado actual:** en desarrollo inicial.
-
-La primera etapa está enfocada en levantar el entorno de simulación, comprender la interfaz de control del Unitree Go2 y definir la metodología para ambos enfoques de locomoción.
-
-La entrega intermedia resume el avance inicial, los problemas encontrados y el plan de trabajo para continuar con la implementación.
+**Estado actual:** en etapa de planificación. Aún no se ha implementado código; este documento describe el problema, los enfoques propuestos y la metodología planeada.
