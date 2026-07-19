@@ -1,12 +1,9 @@
 """Simulador rápido para evaluar un set de parámetros del CPG.
 
 A diferencia de stand_go2_headless.py / walk_cpg_open_loop.py (que pasan por
-la interfaz DDS real, útil para validar sim-to-real), este módulo aplica el
-control directamente sobre mj_data.ctrl. Es lo que se necesita para CEM, que
-corre miles de simulaciones y no puede pagar el overhead de DDS por cada una.
-
-La lógica de control (PD position control, stand-up, CPG+IK) es la misma en
-espíritu que en walk_cpg_open_loop.py, solo que sin la capa DDS de por medio.
+la interfaz DDS real, usada para validar sim-to-real), este módulo aplica el
+control directamente sobre mj_data.ctrl. Es lo que usa CEM, que corre miles
+de simulaciones y no puede pagar el overhead de DDS por cada una.
 """
 import os
 
@@ -17,12 +14,9 @@ from kinematics import inverse_kinematics_leg, HIP_OFFSET_Y
 from oscillator import CpgParams, foot_target
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# scene.xml original trae obstáculos tipo escalera pensados para pruebas de
-# terreno (empiezan en x=1.1m) -- se descubrió que el robot chocaba contra
-# el primer escalón después de ~17s de caminata 2D. Se cargan igual (evita
-# problemas de resolución de rutas de meshdir al mover el XML de carpeta) y
-# se los aparta lejos en Python después de cargar el modelo, ver
-# _move_terrain_obstacles_away().
+# scene.xml trae obstáculos tipo escalera (terreno) a partir de x=1.1m, que
+# no se usan para la caminata 2D; se apartan del área de trabajo en
+# _move_terrain_obstacles_away() en vez de mantener un XML paralelo.
 SCENE_PATH = os.path.join(
     REPO_ROOT, "third_party/unitree_mujoco/unitree_robots/go2/scene.xml"
 )
@@ -54,10 +48,8 @@ TIMESTEP = 0.002
 STAND_UP_SECONDS = 1.5
 KP_STAND_END = 50.0
 KD_STAND = 3.5
-# kp/kd de la caminata ahora vienen de CpgParams (params.kp_walk/kd_walk) --
-# se descubrió que con ganancias fijas (60/4) el PD no lograba seguir la
-# trayectoria a tiempo (errores de tracking de hasta 16°), así que se
-# agregaron a la búsqueda de CEM en vez de dejarlas fijas a mano.
+# kp/kd de la caminata vienen de CpgParams (params.kp_walk/kd_walk), son
+# parte de lo que ajusta CEM.
 
 HEIGHT_FALL_THRESHOLD = 0.15
 TILT_FALL_THRESHOLD = np.deg2rad(45)
@@ -177,12 +169,9 @@ def rollout(params: CpgParams, walk_seconds=4.0, record_video=False, video_fps=3
     y_start = sim.data.qpos[1]
     heights = []
     tilts = []
-    # Muestras de x a intervalo fijo (independiente de walk_seconds), para
-    # poder medir velocidad en ventanas finas a lo largo de todo el rollout
-    # y detectar un frenazo en CUALQUIER punto, no solo en bordes de bloques
-    # fijos (mitades/cuartos no alcanzaban a ver un frenazo muy pegado al
-    # final de la ventana de evaluación -- ver nota en cost.py).
-    sample_every_steps = max(1, round(0.5 / TIMESTEP))  # una muestra cada 0.5s
+    # Muestras de x cada 0.5s, para medir velocidad en ventanas finas a lo
+    # largo del rollout (usado por la función de costo).
+    sample_every_steps = max(1, round(0.5 / TIMESTEP))
     x_samples = [x_start]
 
     if not fell:
@@ -232,13 +221,8 @@ def rollout(params: CpgParams, walk_seconds=4.0, record_video=False, video_fps=3
         for i in range(len(x_samples) - 1)
     ]
 
-    # Velocidad "sostenida": promedio de los últimos ~3s del rollout. Se usa
-    # como métrica principal en vez de la distancia neta total, porque la
-    # distancia neta se puede "ganar" con una ráfaga inicial rápida seguida
-    # de quedarse plantado -- eso todavía puede rendir más distancia total
-    # que una marcha lenta pero sostenida. Al premiar directamente qué tan
-    # rápido sigue yendo AL FINAL, una marcha que se detiene no puede
-    # puntuar bien sin importar qué tan bien arrancó.
+    # Velocidad sostenida: promedio de los últimos ~3s del rollout (usada
+    # como métrica principal de avance en vez de la distancia neta total).
     n_sustained_segments = max(1, round(3.0 / sample_dt)) if not fell else 0
     sustained_segments = (
         segment_velocities[-n_sustained_segments:] if n_sustained_segments else []

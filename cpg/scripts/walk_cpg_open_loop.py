@@ -1,14 +1,9 @@
-"""Validación final por DDS: parado -> caminata con los parámetros YA
-OPTIMIZADOS por CEM (cpg/cem_best_params.npy), usando la IK para convertir
-la trayectoria del pie en comandos articulares.
-
-CEM (cem.py) ajusta los parámetros evaluando con control directo sobre
-mj_data.ctrl (rollout.py), sin pasar por DDS -- necesario para que miles de
-rollouts sean rápidos. Este script corre el resultado YA optimizado, pero
-esta vez sí a través de la interfaz DDS real (LowCmd_/LowState_ vía
-UnitreeSdk2Bridge), la misma que usaría el robot físico. El objetivo es
-confirmar que el comportamiento es el mismo por ambas vías antes de dar por
-cerrada la parte de CPG.
+"""Caminata (parado -> CPG+IK) con los parámetros optimizados por CEM
+(cpg/cem_best_params.npy), a través de la interfaz DDS real (LowCmd_/
+LowState_ vía UnitreeSdk2Bridge) -- la misma que usaría el robot físico.
+CEM en sí ajusta los parámetros con control directo (ver rollout.py), sin
+DDS, por velocidad; este script valida que el resultado se comporta igual
+por la interfaz real.
 
 Uso:
     MUJOCO_GL=egl python3 walk_cpg_open_loop.py

@@ -2,20 +2,16 @@
 
 Referencia: de Boer et al. (2005), "A Tutorial on the Cross-Entropy Method";
 Pinneri et al. (2020), iCEM ("Sample-efficient Cross-Entropy Method for
-Real-time Planning") - de ahí la idea de mantener un piso mínimo de
-desviación estándar para no colapsar la búsqueda prematuramente.
+Real-time Planning") - de ahí el piso mínimo de desviación estándar, para no
+colapsar la búsqueda prematuramente.
 
 Vector de parámetros optimizado: [frequency, duty_factor, stride_length,
 ground_clearance, stance_height, kp_walk, kd_walk] (ver
-cpg/oscillator.py::CpgParams). kp_walk/kd_walk se agregaron después de
-descubrir (midiendo el ángulo comandado vs el real de cada joint) que con
-ganancias fijas puestas a mano (60/4) el PD no llegaba a seguir la
-trayectoria del swing a tiempo -- el pie nunca se despegaba del piso de
-verdad aunque el comando sí lo pidiera. En vez de adivinar mejores
-ganancias a mano, se dejan como parte de la búsqueda.
+cpg/oscillator.py::CpgParams). Las ganancias PD de la caminata se incluyen
+en la búsqueda en vez de dejarlas fijas.
 
 Cada rollout es independiente, así que la evaluación de la población se
-paraleliza con multiprocessing (16 núcleos disponibles en el servidor).
+paraleliza con multiprocessing.
 """
 import time
 from dataclasses import dataclass
@@ -32,9 +28,8 @@ PARAM_NAMES = [
     "stance_height", "kp_walk", "kd_walk",
 ]
 
-# (min, max) de cada parámetro. stride_length permite valores negativos:
-# si el signo de la trayectoria estuviera "invertido" respecto a lo esperado,
-# CEM lo puede corregir solo, sin que tengamos que asumir la dirección correcta.
+# (min, max) de cada parámetro. stride_length permite valores negativos,
+# para que CEM pueda corregir el signo de la trayectoria si hiciera falta.
 BOUNDS_LOW = np.array([0.5, 0.3, -0.20, 0.01, -0.40, 20.0, 1.0])
 BOUNDS_HIGH = np.array([3.0, 0.8, 0.20, 0.10, -0.15, 250.0, 15.0])
 
@@ -42,11 +37,10 @@ INIT_MEAN = np.array([1.5, 0.5, 0.05, 0.05, -0.30, 80.0, 5.0])
 INIT_STD = np.array([0.5, 0.1, 0.08, 0.03, 0.06, 40.0, 3.0])
 STD_FLOOR = np.array([0.05, 0.02, 0.01, 0.005, 0.01, 5.0, 0.5])
 
-WALK_SECONDS = 15.0  # con margen sobre la duración que se quiere garantizar:
-# el rollout de entrenamiento es ciego a cualquier falla que ocurra justo
-# después de walk_seconds (no importa qué tan fina sea la métrica DENTRO de
-# la ventana, ver nota en cost.py) -- así que la única forma de asegurar que
-# la marcha se sostiene más allá de N segundos es entrenar con >= N segundos.
+# Con margen sobre la duración que se quiere garantizar en la evaluación
+# final: el rollout de entrenamiento no puede penalizar fallas posteriores
+# a walk_seconds.
+WALK_SECONDS = 15.0
 
 
 def _evaluate(params_array):

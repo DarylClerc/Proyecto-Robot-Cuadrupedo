@@ -1,12 +1,12 @@
-"""Hito 1 (CPG): el Go2 se para y se mantiene estable, en modo headless.
+"""El Go2 se para y se mantiene estable, en modo headless.
 
-Adaptación de third_party/unitree_mujoco/example/python/stand_go2.py, pero:
+Adaptación de third_party/unitree_mujoco/example/python/stand_go2.py:
   - Sin ventana interactiva (mujoco.viewer.launch_passive) -> renderiza a video (EGL).
-  - Simulador (bridge DDS) y controlador corren en el mismo proceso/loop, para no
+  - Simulador (bridge DDS) y controlador corren en el mismo proceso/loop, sin
     depender de tiempo real de wall-clock.
 
-Usa la MISMA interfaz DDS (LowCmd_/LowState_ vía UnitreeSdk2Bridge) que se usaría
-contra el robot real, tal como recomienda el enunciado del proyecto.
+Usa la interfaz DDS (LowCmd_/LowState_ vía UnitreeSdk2Bridge) que expone el
+robot real.
 
 Uso:
     MUJOCO_GL=egl python3 stand_go2_headless.py

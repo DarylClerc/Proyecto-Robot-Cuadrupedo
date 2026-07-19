@@ -29,7 +29,15 @@ simulaciones y no necesita visualización en vivo.
 
 ## Estructura
 
-- `scripts/sanity_check_sim.py`: carga el Go2, simula unos segundos sin control
-  (solo gravedad) y guarda un video. Sirve para validar que el pipeline
-  MuJoCo + EGL funciona.
+- `kinematics.py`: cinemática directa e inversa por pata.
+- `oscillator.py`: generador de trayectoria del pie (CPG, marcha de trote).
+- `rollout.py`: simulación rápida (control directo sobre MuJoCo) usada por CEM.
+- `cost.py`: función de costo para CEM.
+- `cem.py`: optimizador Cross-Entropy Method.
+- `cem_best_params.npy`: mejores parámetros encontrados por la última corrida de CEM.
+- `scripts/sanity_check_sim.py`: sanity check del pipeline MuJoCo + EGL (caída libre).
+- `scripts/stand_go2_headless.py`: postura de pie, vía interfaz DDS.
+- `scripts/validate_fk.py`, `scripts/validate_ik.py`: validación de cinemática contra MuJoCo.
+- `scripts/evaluate_best_params.py`: evalúa `cem_best_params.npy` con control directo.
+- `scripts/walk_cpg_open_loop.py`: evalúa `cem_best_params.npy` vía interfaz DDS.
 - `outputs/`: videos generados (ignorados por git).

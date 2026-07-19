@@ -35,8 +35,6 @@ La interfaz de control permite enviar comandos de posición articular, por lo qu
 
 ## Entorno de trabajo
 
-Se recomienda inicialmente usar Docker sobre Ubuntu 22.04 para evitar problemas de compatibilidad. En el servidor de trabajo de este proyecto no hay permisos de administrador (sudo), por lo que Docker no es viable ahí; en su lugar se usa un entorno **Conda** (`robot-cpg`, Python 3.10) con dependencias instaladas vía `pip` (wheels precompilados, sin compilar nada en C++). Detalles de instalación en [cpg/README.md](cpg/README.md).
-
 Componentes:
 - MuJoCo (renderizado headless vía EGL, el servidor no tiene entorno gráfico)
 - MuJoCo Playground (para la parte de RL)

@@ -68,14 +68,9 @@ def foot_trajectory(phase_frac, params: CpgParams):
     """Offset (dx, dz) del pie respecto a la posición nominal de stance,
     para una fase phase_frac en [0, 1) (ya envuelta, ver `wrap_phase`).
 
-    Tanto stance como swing usan un perfil coseno con velocidad CERO en
-    ambos extremos (touchdown y liftoff). Una primera versión usaba stance
-    lineal (velocidad constante) empalmado con swing coseno (velocidad cero
-    en los bordes) -- eso deja una discontinuidad de velocidad justo en la
-    transición stance/swing, una patada impulsiva en cada paso que resultó
-    ser la causa de una oscilación de cabeceo/balanceo que crecía con el
-    tiempo hasta frenar la caminata (ver cpg/cost.py). Iguales perfiles en
-    ambas fases eliminan el salto.
+    Stance y swing usan ambos un perfil coseno, con velocidad nula en los
+    extremos (touchdown y liftoff), para evitar discontinuidades de
+    velocidad en la transición entre fases.
     """
     duty = params.duty_factor
     half_stride = params.stride_length / 2.0
