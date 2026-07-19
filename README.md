@@ -35,19 +35,16 @@ La interfaz de control permite enviar comandos de posición articular, por lo qu
 
 ## Entorno de trabajo
 
-Para asegurar reproducibilidad y evitar problemas de compatibilidad, se recomienda utilizar un entorno basado en:
+Se recomienda inicialmente usar Docker sobre Ubuntu 22.04 para evitar problemas de compatibilidad. En el servidor de trabajo de este proyecto no hay permisos de administrador (sudo), por lo que Docker no es viable ahí; en su lugar se usa un entorno **Conda** (`robot-cpg`, Python 3.10) con dependencias instaladas vía `pip` (wheels precompilados, sin compilar nada en C++). Detalles de instalación en [cpg/README.md](cpg/README.md).
 
-- Docker
-- Ubuntu 22.04
-- MuJoCo
-- MuJoCo Playground
+Componentes:
+- MuJoCo (renderizado headless vía EGL, el servidor no tiene entorno gráfico)
+- MuJoCo Playground (para la parte de RL)
 - Python
-- CUDA, en caso de utilizar GPU para entrenamiento
-- Repositorios oficiales de Unitree:
-  - unitree_mujoco
-  - unitree_sdk
-
-El uso de Docker permite mantener un entorno controlado y facilita la instalación de dependencias necesarias para la simulación y entrenamiento.
+- CUDA, para el entrenamiento de RL (2x RTX 4090 disponibles)
+- Repositorios oficiales de Unitree, incluidos como submódulos en `third_party/`:
+  - [unitree_mujoco](third_party/unitree_mujoco)
+  - [unitree_sdk2_python](third_party/unitree_sdk2_python) (versión Python del SDK, no la de C++, para evitar dependencias que requieren sudo)
 
 ## Referencias principales
 
@@ -60,4 +57,12 @@ Las referencias consideradas inicialmente para el desarrollo del proyecto son:
 
 ## Estado del proyecto
 
-**Estado actual:** en etapa de planificación. Aún no se ha implementado código; este documento describe el problema, los enfoques propuestos y la metodología planeada.
+**Estado actual:** Parte 1 (CPG + CEM) implementada y validada. Código en [cpg/](cpg/):
+
+- Cinemática directa e inversa por pata, derivadas analíticamente y validadas contra MuJoCo (error 0.000mm).
+- Postura de pie validada usando la interfaz DDS real (`LowCmd_`/`LowState_`, la misma que expone el robot físico).
+- Oscilador CPG en task space (trayectoria swing/stance por pata, marcha de trote).
+- Optimización de los parámetros del oscilador con Cross-Entropy Method.
+- Caminata 2D hacia adelante resultante: estable, sin caídas, deriva lateral e inclinación mínimas, validada tanto con control directo como por la interfaz DDS.
+
+Parte 2 (RL): pendiente de iniciar.

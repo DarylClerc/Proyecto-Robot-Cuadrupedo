@@ -5,3 +5,7 @@ install/
 log/
 .vscode/
 .DS_Store
+
+# Salidas de simulación (videos, checkpoints, etc.)
+cpg/outputs/
+*.mp4
