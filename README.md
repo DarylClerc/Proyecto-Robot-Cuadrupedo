@@ -44,6 +44,10 @@ Componentes:
   - [unitree_mujoco](third_party/unitree_mujoco)
   - [unitree_sdk2_python](third_party/unitree_sdk2_python) (versión Python del SDK, no la de C++, para evitar dependencias que requieren sudo)
 
+Cada parte tiene su propio entorno conda (`robot-cpg`, `robot-rl`) y su
+propio `README.md` con instrucciones de instalación ([cpg/README.md](cpg/README.md),
+[rl/README.md](rl/README.md)).
+
 ## Referencias principales
 
 Las referencias consideradas inicialmente para el desarrollo del proyecto son:
@@ -52,10 +56,14 @@ Las referencias consideradas inicialmente para el desarrollo del proyecto son:
 - Pinneri, C., Sawant, S., Blaes, S., Achterhold, J., Stueckler, J., Rolinek, M., & Martius, G. *Sample-efficient Cross-Entropy Method for Real-time Planning*. Conference on Robot Learning, 2020.
 - Suzuki, S., Matayoshi, K., Hayashibe, M., & Owaki, D. *Foot trajectory as a key factor for diverse gait patterns in quadruped robot locomotion*. Scientific Reports, 15, 2025.
 - Zakka, K., Tabanpour, B., Liao, Q., Haiderbhai, M., Holt, S., Luo, J., Allshire, A., Frey, E., Sreenath, K., Kahrs, L. A., Sferrazza, C., Tassa, Y., & Abbeel, P. *MuJoCo Playground*. arXiv:2502.08844, 2025.
+- Rudin, N., Hoeller, D., Reist, P., & Hutter, M. *Learning to Walk in Minutes Using Massively Parallel Deep Reinforcement Learning*. Conference on Robot Learning, 2022.
+- Margolis, G. B., & Agrawal, P. *Walk These Ways: Tuning Robot Control for Generalization with Multiplicity of Behavior*. Conference on Robot Learning, 2023.
 
 ## Estado del proyecto
 
-**Estado actual:** Parte 1 (CPG + CEM) implementada y validada. Código en [cpg/](cpg/):
+**Estado actual:** ambas partes implementadas y validadas.
+
+**Parte 1 (CPG + CEM)** — código en [cpg/](cpg/), resultados detallados en [cpg/RESULTADOS.md](cpg/RESULTADOS.md):
 
 - Cinemática directa e inversa por pata, derivadas analíticamente y validadas contra MuJoCo (error 0.000mm).
 - Postura de pie validada usando la interfaz DDS real (`LowCmd_`/`LowState_`, la misma que expone el robot físico).
@@ -63,4 +71,9 @@ Las referencias consideradas inicialmente para el desarrollo del proyecto son:
 - Optimización de los parámetros del oscilador con Cross-Entropy Method.
 - Caminata 2D hacia adelante resultante: estable, sin caídas, deriva lateral e inclinación mínimas, validada tanto con control directo como por la interfaz DDS.
 
-Parte 2 (RL): pendiente de iniciar.
+**Parte 2 (RL)** — código en [rl/](rl/), resultados detallados en [rl/RESULTADOS.md](rl/RESULTADOS.md):
+
+- Entorno adaptado (MuJoCo Playground + Go2) para correr en este servidor (headless, sin GUI).
+- Función de recompensa diseñada y comparada en dos formulaciones: tracking + regularización estándar (Rudin et al. 2022), y esa misma más gait shaping explícito (Margolis & Agrawal 2023).
+- Locomoción omnidireccional (adelante, atrás, lateral, rotación) entrenada con PPO y evaluada cuantitativamente bajo distintos comandos.
+- Análisis comparativo con métricas concretas (deslizamiento de patas, precisión de trayectoria, consumo energético) entre ambas formulaciones.

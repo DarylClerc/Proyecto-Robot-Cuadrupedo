@@ -9,3 +9,9 @@ log/
 # Salidas de simulación (videos, checkpoints, etc.)
 cpg/outputs/
 *.mp4
+
+# RL: mujoco_menagerie se descarga automáticamente al correr el código
+# (~2GB), y go2_train_logs/ son checkpoints+videos generados (no fuente).
+rl/mujoco_playground_el7009_project-main/mujoco_playground/external_deps/
+rl/mujoco_playground_el7009_project-main/go2_train_logs/
+rl/*.zip
