@@ -13,7 +13,7 @@ caer solo por gravedad (sin control) durante 3s, en modo headless (EGL).
 a video funciona en el servidor (sin GUI, sin Docker/sudo).
 
 **Resultado**: altura final del torso 0.077m (el robot colapsa, esperado sin
-actuación). Video: `outputs/sanity_check.mp4`.
+actuación). Video: `outputs/01_sanity_check.mp4`.
 
 ## 2. Postura de pie, vía interfaz DDS (aislado)
 
@@ -30,7 +30,7 @@ robot físico.
 | Inclinación final | 1.51° |
 | ¿Se cayó? | No |
 
-Video: `outputs/stand_go2_headless.mp4`.
+Video: `outputs/02_stand_go2_headless.mp4`.
 
 ## 3. Cinemática directa (FK), aislada
 
@@ -111,7 +111,7 @@ mecanismo que usa CEM para evaluar).
 | Inclinación media | 0.73° |
 | ¿Se cayó? | No |
 
-Video: `outputs/walk_cpg_best_params.mp4`.
+Video: `outputs/05_walk_cpg_best_params.mp4`.
 
 ## 7. Caminata final — validación cruzada por DDS
 
@@ -135,7 +135,7 @@ del bridge DDS). No invalida el resultado (ambas vías caminan establemente)
 pero es una discrepancia cuantitativa a documentar y resolver antes de
 considerar el sistema completamente cerrado.
 
-Video: `outputs/walk_cpg_dds_validation.mp4`.
+Video: `outputs/06_walk_cpg_dds_validation.mp4`.
 
 ## 8. Iteración documentada: intento previo con deriva angular
 
@@ -146,7 +146,7 @@ trayectoria del oscilador con precisión, generando una asimetría de
 tracking entre patas izquierda/derecha que curva la trayectoria en vez de
 mantenerla recta.
 
-Video: `outputs/walk_cpg_fast_diagonal.mp4`.
+Video: `outputs/04_walk_cpg_fast_diagonal.mp4`.
 
 ## 9. Problemas encontrados durante el desarrollo (resumen)
 
