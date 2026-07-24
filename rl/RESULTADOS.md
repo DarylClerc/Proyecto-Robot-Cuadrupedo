@@ -138,17 +138,26 @@ B consume mas energia que A, consistente con dar pasos mas "activos"
 
 ## 5. Videos de referencia
 
-Ademas, `eval_sequence.mp4` (en cada carpeta de checkpoint) muestra en un
-solo video de 16s la misma politica respondiendo a comandos que cambian
-cada 4s (adelante -> lateral -> atras -> rotacion), demostrando que es
-una unica red omnidireccional, no un video por "modo" distinto.
+Las tres carpetas (`baseline_recompensa_ejemplo/`, `formulacionA_final/`,
+`formulacionB_final/`), dentro de `000206438400/`, tienen el mismo set de
+6 videos, generados con los mismos comandos y misma cámara para poder
+compararlas directamente:
 
-- `go2_train_logs/formulacionA_final/000206438400/eval_x1.0_y0.0_yaw0.0.mp4`
-- `go2_train_logs/formulacionB_final/000206438400/eval_x1.0_y0.0_yaw0.0.mp4`
-- `go2_train_logs/formulacionA_final/000206438400/eval_x0.0_y0.7_yaw0.0.mp4`
-- `go2_train_logs/formulacionB_final/000206438400/eval_x0.0_y0.7_yaw0.0.mp4`
-- Curvas de recompensa: `formulacionA_final/reward_curve.png`,
-  `formulacionB_final/reward_curve.png`
+- `eval_x1.0_y0.0_yaw0.0.mp4` — adelante
+- `eval_x-1.0_y0.0_yaw0.0.mp4` — atrás
+- `eval_x0.0_y0.7_yaw0.0.mp4` — lateral
+- `eval_x0.0_y0.0_yaw1.0.mp4` — rotación
+- `eval_sequence_angulo1.mp4` / `eval_sequence_angulo2.mp4` — secuencia de
+  20s (adelante → lateral → atrás → rotar, 5s cada comando) mostrando en
+  un solo video que es una única política omnidireccional, no un modelo
+  por dirección; grabada desde dos ángulos de cámara distintos.
+
+Curvas de recompensa: `<carpeta>/reward_curve.png`.
+
+**Nota**: el video de rotación de la formulación base usa `yaw=1.0`
+(dentro del rango de entrenamiento), a diferencia del primer intento
+reportado en la sección 2 (`yaw=1.5`, fuera de rango), para que la
+comparación entre las tres sea justa.
 
 ## 6. Pendiente
 

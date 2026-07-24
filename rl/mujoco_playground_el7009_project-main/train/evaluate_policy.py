@@ -111,15 +111,21 @@ def parse_args():
              "(adelante, lateral, atras, rotar), para demostrar en un solo "
              "video que la MISMA politica responde a distintos comandos."
     )
+    parser.add_argument(
+        "--camera-azimuth", type=float, default=120,
+        help="Angulo de la camara de tracking (grados). Util para generar "
+             "la misma toma desde otro angulo."
+    )
     return parser.parse_args()
 
 
 # Secuencia de demostracion: (x_vel, y_vel, yaw_vel, duracion_segundos).
+# 5s por comando = 20s totales.
 DEMO_SEQUENCE = [
-    (1.0, 0.0, 0.0, 4.0),   # adelante
-    (0.0, 0.7, 0.0, 4.0),   # lateral
-    (-1.0, 0.0, 0.0, 4.0),  # atras
-    (0.0, 0.0, 1.0, 4.0),   # rotacion en el lugar
+    (1.0, 0.0, 0.0, 5.0),   # adelante
+    (0.0, 0.7, 0.0, 5.0),   # lateral
+    (-1.0, 0.0, 0.0, 5.0),  # atras
+    (0.0, 0.0, 1.0, 5.0),   # rotacion en el lugar
 ]
 
 
@@ -163,7 +169,7 @@ def main():
         cam.type = mujoco.mjtCamera.mjCAMERA_TRACKING
         cam.trackbodyid = m.body("trunk").id
         cam.distance = 1.4
-        cam.azimuth = 120
+        cam.azimuth = args.camera_azimuth
         cam.elevation = -15
 
     frames = []
