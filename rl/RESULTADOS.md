@@ -143,11 +143,11 @@ Las tres carpetas (`baseline_recompensa_ejemplo/`, `formulacionA_final/`,
 6 videos, generados con los mismos comandos y misma cámara para poder
 compararlas directamente:
 
-- `eval_x1.0_y0.0_yaw0.0.mp4` — adelante
-- `eval_x-1.0_y0.0_yaw0.0.mp4` — atrás
-- `eval_x0.0_y0.7_yaw0.0.mp4` — lateral
-- `eval_x0.0_y0.0_yaw1.0.mp4` — rotación
-- `eval_sequence_angulo1.mp4` / `eval_sequence_angulo2.mp4` — secuencia de
+- `01_adelante.mp4` — adelante
+- `02_atras.mp4` — atrás
+- `03_lateral.mp4` — lateral
+- `04_rotacion.mp4` — rotación
+- `05_secuencia_angulo1.mp4` / `06_secuencia_angulo2.mp4` — secuencia de
   20s (adelante → lateral → atrás → rotar, 5s cada comando) mostrando en
   un solo video que es una única política omnidireccional, no un modelo
   por dirección; grabada desde dos ángulos de cámara distintos.
