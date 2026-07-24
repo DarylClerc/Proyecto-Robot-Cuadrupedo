@@ -10,11 +10,13 @@ en [RESULTADOS.md](RESULTADOS.md).
 ```bash
 conda create -n robot-rl python=3.11
 conda activate robot-rl
-cd mujoco_playground_el7009_project-main
-pip install -e ".[cuda]"
-pip install "jax[cuda12]<0.10" flax optax orbax-checkpoint --upgrade
-pip install imageio imageio-ffmpeg
+pip install -r rl/requirements.txt
+cd rl/mujoco_playground_el7009_project-main && pip install -e ".[cuda]" && cd -
 ```
+
+`rl/requirements.txt` fija las versiones exactas que funcionan en este
+proyecto — en particular, `jax<0.10` (versiones más nuevas eliminan una
+función que usa `brax==0.14.2`, ver `RESULTADOS.md`).
 
 `mujoco_menagerie` (assets del Go2) se descarga automáticamente la primera
 vez que se carga el entorno.
