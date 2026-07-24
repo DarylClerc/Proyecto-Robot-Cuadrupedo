@@ -120,22 +120,29 @@ sección 6, pero a través de la interfaz DDS real (no control directo).
 
 | Métrica | Control directo (§6) | Vía DDS |
 |---|---|---|
-| Distancia avanzada (8s) | 1.196 m | 0.924 m |
-| Inclinación final | 0.73° (media) | 2.18° |
+| Distancia avanzada (8s) | 1.196 m | 1.193 m |
+| Inclinación final | 0.73° (media) | 1.26° |
 | ¿Se cayó? | No | No |
 
-**Observación**: ambas vías producen una caminata estable y sin caídas,
-pero con una diferencia de magnitud (~23%) no despreciable entre el
-resultado por control directo y por DDS. En una corrida anterior (con otros
-parámetros) la diferencia había sido de ~1mm; esta vez es mayor. Posibles
-causas a investigar: diferencias menores en la duración de la fase de
-pararse entre ambos scripts (1.5s vs 2.0s), o en cómo cada camino lee el
-estado articular (`mj_data.qpos` directo vs `mj_data.sensordata` a través
-del bridge DDS). No invalida el resultado (ambas vías caminan establemente)
-pero es una discrepancia cuantitativa a documentar y resolver antes de
-considerar el sistema completamente cerrado.
+**Observación**: ambas vías producen prácticamente el mismo resultado
+(diferencia de 3mm). En una versión anterior de `walk_cpg_open_loop.py`
+había una discrepancia de ~23% (0.924 m vs 1.196 m) que se dejó como
+pendiente de investigar; la causa real era que ese script cargaba
+`scene.xml` completo, el cual incluye una serie de obstáculos tipo
+escalera (pensados para pruebas de terreno) sin apartarlos del área de
+trabajo -- a diferencia de `rollout.py`, que sí los aparta. Al aplicar el
+mismo tratamiento en `walk_cpg_open_loop.py`, la distancia recorrida por
+DDS pasó de 0.924 m a 1.193 m, cerrando la discrepancia casi por
+completo. Esto también se confirmó con una corrida de 20s: 2.993 m por
+DDS vs 2.997 m con control directo (antes, con los obstáculos presentes,
+la misma prueba de 20s solo alcanzaba 0.930 m -- parecía que la caminata
+"se frenaba", cuando en realidad estaba siendo estorbada por geometría
+que ni siquiera debía estar en la escena).
 
-Video: `outputs/06_walk_cpg_dds_validation.mp4`.
+Videos: `outputs/06_walk_cpg_dds_validation.mp4` (8s, cámara original),
+`outputs/09_walk_cpg_dds_validation_largo.mp4` (20s, confirma que se
+sostiene en el tiempo), `outputs/10_walk_cpg_dds_validation_lateral.mp4`
+(vista de perfil).
 
 ## 8. Iteración documentada: intento previo con deriva angular
 

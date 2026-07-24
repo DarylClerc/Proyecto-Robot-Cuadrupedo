@@ -112,7 +112,15 @@ class Go2Sim:
         return height, tilt
 
 
-def rollout(params: CpgParams, walk_seconds=4.0, record_video=False, video_fps=30):
+def rollout(
+    params: CpgParams,
+    walk_seconds=4.0,
+    record_video=False,
+    video_fps=30,
+    camera_azimuth=120,
+    camera_elevation=-15,
+    camera_distance=2.0,
+):
     """Corre stand-up + caminata CPG para los params dados.
 
     Devuelve un dict con métricas de la caminata (usadas por la función de
@@ -134,9 +142,9 @@ def rollout(params: CpgParams, walk_seconds=4.0, record_video=False, video_fps=3
         cam = mujoco.MjvCamera()
         cam.type = mujoco.mjtCamera.mjCAMERA_TRACKING
         cam.trackbodyid = sim.model.body("base_link").id
-        cam.distance = 2.0
-        cam.azimuth = 120
-        cam.elevation = -15
+        cam.distance = camera_distance
+        cam.azimuth = camera_azimuth
+        cam.elevation = camera_elevation
 
     n_stand_steps = int(STAND_UP_SECONDS / TIMESTEP)
     n_walk_steps = int(walk_seconds / TIMESTEP)

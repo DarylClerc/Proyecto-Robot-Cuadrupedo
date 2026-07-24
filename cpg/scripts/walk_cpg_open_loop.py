@@ -35,8 +35,11 @@ from unitree_sdk2py.utils.crc import CRC  # noqa: E402
 SCENE_PATH = os.path.join(
     REPO_ROOT, "third_party/unitree_mujoco/unitree_robots/go2/scene.xml"
 )
-OUTPUT_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "..", "outputs", "walk_cpg_dds_validation.mp4"
+OUTPUT_PATH = os.environ.get(
+    "CPG_OUTPUT_PATH",
+    os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "..", "outputs", "walk_cpg_dds_validation.mp4"
+    ),
 )
 PARAMS_PATH = os.path.join(REPO_ROOT, "cpg", "cem_best_params.npy")
 
@@ -45,8 +48,14 @@ INTERFACE = "lo"
 
 TIMESTEP = 0.002
 STAND_UP_SECONDS = 2.0
-WALK_SECONDS = 8.0
+WALK_SECONDS = float(os.environ.get("CPG_WALK_SECONDS", 8.0))
 FPS = 30
+
+# Cámara: por defecto libre/fija; con CPG_CAM_TRACKING=1 sigue al robot.
+CAM_TRACKING = os.environ.get("CPG_CAM_TRACKING", "0") == "1"
+CAM_AZIMUTH = float(os.environ.get("CPG_CAM_AZIMUTH", 120))
+CAM_ELEVATION = float(os.environ.get("CPG_CAM_ELEVATION", -15))
+CAM_DISTANCE = float(os.environ.get("CPG_CAM_DISTANCE", 2.0))
 
 LEGS = ["FR", "FL", "RR", "RL"]
 # Índice del primer motor (hip) de cada pata, en el orden del actuator list.
@@ -84,6 +93,16 @@ def build_lowcmd():
     return cmd
 
 
+def _move_terrain_obstacles_away(model):
+    """scene.xml trae geoms de escalera/terreno (sin nombre, hijos directos
+    del worldbody) que no se usan para la caminata 2D -- se apartan del
+    área de trabajo (mismo criterio que rollout.py)."""
+    for i in range(model.ngeom):
+        geom = model.geom(i)
+        if geom.name == "" and model.geom_bodyid[i] == 0:
+            model.geom_pos[i, 0] += 1000.0
+
+
 def base_height_and_tilt(mj_data):
     height = mj_data.qpos[2]
     w, x, y, z = mj_data.qpos[3:7]
@@ -97,6 +116,7 @@ def main():
 
     mj_model = mujoco.MjModel.from_xml_path(SCENE_PATH)
     mj_model.opt.timestep = TIMESTEP
+    _move_terrain_obstacles_away(mj_model)
     mj_data = mujoco.MjData(mj_model)
     mujoco.mj_resetData(mj_model, mj_data)
     mujoco.mj_forward(mj_model, mj_data)
@@ -121,6 +141,15 @@ def main():
     renderer = mujoco.Renderer(mj_model, height=480, width=640)
     frames = []
     steps_per_frame = max(1, round((1.0 / FPS) / TIMESTEP))
+
+    cam = None
+    if CAM_TRACKING:
+        cam = mujoco.MjvCamera()
+        cam.type = mujoco.mjtCamera.mjCAMERA_TRACKING
+        cam.trackbodyid = mj_model.body("base_link").id
+        cam.distance = CAM_DISTANCE
+        cam.azimuth = CAM_AZIMUTH
+        cam.elevation = CAM_ELEVATION
 
     total_seconds = STAND_UP_SECONDS + WALK_SECONDS
     n_steps = int(total_seconds / TIMESTEP)
@@ -164,7 +193,7 @@ def main():
         mujoco.mj_step(mj_model, mj_data)
 
         if step % steps_per_frame == 0:
-            renderer.update_scene(mj_data)
+            renderer.update_scene(mj_data, camera=cam) if cam else renderer.update_scene(mj_data)
             frames.append(renderer.render())
 
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
